@@ -66,8 +66,6 @@ int collapse(DArray *buf, size_t len)
     }
     buf->array = new_ptr;
     buf->length-= (int)len;
-    buf->filled-= (int)len;
-    buf->cursor-= (int)len;
     return 0;
 }
 
@@ -84,8 +82,12 @@ int d_insert(DArray *buf, int item){
     return 0;
 }
 
-void d_remove(DArray *buf, int index) // 2
+int d_remove(DArray *buf, int index) // 2
 {
+    if(index < 0){
+        printf("out of bounds");
+        return 1;
+    }
     // [10 ,20, (30), 40]
     //  0   1    2    3
     for(int i = index; i < (buf->filled - 1); i++){
@@ -94,6 +96,9 @@ void d_remove(DArray *buf, int index) // 2
     }
     // decrease the size to delete index 3
     collapse(buf, 1);
+    buf->filled--;
+    buf->cursor--;
+    return 0;
 }
 
 int d_index_of(DArray *buf, int item)
