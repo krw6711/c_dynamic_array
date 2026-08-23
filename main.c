@@ -58,6 +58,8 @@ int collapse(DArray *buf, size_t len)
     }
     buf->array = new_ptr;
     buf->length--;
+    buf->filled--;
+    buf->cursor--;
     return 0;
 }
 
@@ -74,15 +76,18 @@ int d_insert(DArray *buf, int item){
     return 0;
 }
 
-void d_remove(DArray *buf, int index)
+void d_remove(DArray *buf, int index) // 2
 {
-    index++;
-    for(; index < buf->length; index++){
-        if(index == (buf->length - 1)) break;
-        buf->array[index - 1] = buf->array[index];
+    // [10 ,20, (30), 40]
+    //  0   1    2    3
+    index++; // 3
+    int len = (int)buf->length - index; // 4 - 3 = 1
+    for(int i = 0; i < len; i++){
+        // index 2 = index 3
+        buf->array[index - (i+1)] = buf->array[index];
     }
+    // decrease the size to delete index 3
     collapse(buf, 1);
-    buf->filled--;
 }
 
 int d_index_of(DArray *buf, int item)
@@ -113,12 +118,12 @@ int main(int argc, char *argv[]){
     d_insert(&numbers, 20); // 1
     d_insert(&numbers, 30); // 2
     d_insert(&numbers, 40);
-    d_remove(&numbers, 2);  // no 30
     d_insert(&numbers, 50);
     d_insert(&numbers, 60);
+    d_remove(&numbers, 2);  // no 30
     print_darray(&numbers);
-    printf("%d\n", d_index_of(&numbers, 20));
-    printf("%d\n", d_index_of(&numbers, 600));
+    printf("%d\n", d_index_of(&numbers, 20)); // 1
+    printf("%d\n", d_index_of(&numbers, 600)); // -1
     free_darray(&numbers);
 
     return 0;
