@@ -82,6 +82,15 @@ void d_remove(DArray *buf, int index)
         buf->array[index - 1] = buf->array[index];
     }
     collapse(buf, 1);
+    buf->filled--;
+}
+
+int d_index_of(DArray *buf, int item)
+{
+    for (int i = 0; i < buf->length; i++) {
+        if(buf->array[i] == item) return i;
+    }
+    return -1;
 }
 
 void print_darray(DArray *buf){
@@ -100,14 +109,16 @@ int main(int argc, char *argv[]){
     // signal(SIGINT, clean_mem);
 
     DArray numbers = new_darray(3);
-    d_insert(&numbers, 10);
-    d_insert(&numbers, 20);
-    d_insert(&numbers, 30);
+    d_insert(&numbers, 10); // 0
+    d_insert(&numbers, 20); // 1
+    d_insert(&numbers, 30); // 2
     d_insert(&numbers, 40);
-    d_remove(&numbers, 2);
+    d_remove(&numbers, 2);  // no 30
     d_insert(&numbers, 50);
     d_insert(&numbers, 60);
     print_darray(&numbers);
+    printf("%d\n", d_index_of(&numbers, 20));
+    printf("%d\n", d_index_of(&numbers, 600));
     free_darray(&numbers);
 
     return 0;
