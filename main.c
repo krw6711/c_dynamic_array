@@ -37,6 +37,10 @@ DArray new_darray(size_t len){
 
 int expand(DArray *buf, size_t len)
 {
+    if(len == 0){
+        printf("can not increase by nothing");
+        return 1;
+    }
     size_t new_size = ((size_t)buf->length + len) * sizeof(int);
     int* new_ptr = realloc(buf->array, new_size);
     if(new_ptr ==  NULL){
@@ -44,12 +48,16 @@ int expand(DArray *buf, size_t len)
         return 1;
     }
     buf->array = new_ptr;
-    buf->length++;
+    buf->length+= (int)len;
     return 0;
 }
 
 int collapse(DArray *buf, size_t len)
 {
+    if(len == 0){
+        printf("can not decrease by nothing");
+        return 1;
+    }
     size_t new_size = ((size_t)buf->length - len) * sizeof(int);
     int* new_ptr = realloc(buf->array, new_size);
     if(new_ptr ==  NULL){
@@ -57,9 +65,9 @@ int collapse(DArray *buf, size_t len)
         return 1;
     }
     buf->array = new_ptr;
-    buf->length--;
-    buf->filled--;
-    buf->cursor--;
+    buf->length-= (int)len;
+    buf->filled-= (int)len;
+    buf->cursor-= (int)len;
     return 0;
 }
 
@@ -84,7 +92,7 @@ void d_remove(DArray *buf, int index) // 2
     int len = (int)buf->length - index; // 4 - 3 = 1
     for(int i = 0; i < len; i++){
         // index 2 = index 3
-        buf->array[index - (i+1)] = buf->array[index];
+        buf->array[index - (i+1)] = buf->array[index - i];
     }
     // decrease the size to delete index 3
     collapse(buf, 1);
@@ -92,14 +100,14 @@ void d_remove(DArray *buf, int index) // 2
 
 int d_index_of(DArray *buf, int item)
 {
-    for (int i = 0; i < buf->length; i++) {
+    for (int i = 0; i < buf->filled; i++) {
         if(buf->array[i] == item) return i;
     }
     return -1;
 }
 
 void print_darray(DArray *buf){
-    for(int i = 0; i < buf->length; i++){
+    for(int i = 0; i < buf->filled; i++){
         printf("%d\n", buf->array[i]);
     }
 }
