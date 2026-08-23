@@ -88,11 +88,9 @@ void d_remove(DArray *buf, int index) // 2
 {
     // [10 ,20, (30), 40]
     //  0   1    2    3
-    index++; // 3
-    int len = (int)buf->length - index; // 4 - 3 = 1
-    for(int i = 0; i < len; i++){
+    for(int i = index; i < (buf->length - 1); i++){
         // index 2 = index 3
-        buf->array[index - (i+1)] = buf->array[index - i];
+        buf->array[i] = buf->array[i + 1];
     }
     // decrease the size to delete index 3
     collapse(buf, 1);
