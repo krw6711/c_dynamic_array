@@ -88,7 +88,7 @@ void d_remove(DArray *buf, int index) // 2
 {
     // [10 ,20, (30), 40]
     //  0   1    2    3
-    for(int i = index; i < (buf->length - 1); i++){
+    for(int i = index; i < (buf->filled - 1); i++){
         // index 2 = index 3
         buf->array[i] = buf->array[i + 1];
     }
