@@ -48,7 +48,20 @@ int expand(DArray *buf, size_t len)
     return 0;
 }
 
-int insert(DArray *buf, int item){
+int collapse(DArray *buf, size_t len)
+{
+    size_t new_size = ((size_t)buf->length - len) * sizeof(int);
+    int* new_ptr = realloc(buf->array, new_size);
+    if(new_ptr ==  NULL){
+        printf("cant expand, oout of memory");
+        return 1;
+    }
+    buf->array = new_ptr;
+    buf->length--;
+    return 0;
+}
+
+int d_insert(DArray *buf, int item){
     if(buf->length == buf->filled){
         if(expand(buf, 1)){
             printf("can not insert, no space");
@@ -59,6 +72,16 @@ int insert(DArray *buf, int item){
     buf->cursor++;
     buf->filled++;
     return 0;
+}
+
+void d_remove(DArray *buf, int index)
+{
+    index++;
+    for(; index < buf->length; index++){
+        if(index == (buf->length - 1)) break;
+        buf->array[index - 1] = buf->array[index];
+    }
+    collapse(buf, 1);
 }
 
 void print_darray(DArray *buf){
@@ -77,10 +100,13 @@ int main(int argc, char *argv[]){
     // signal(SIGINT, clean_mem);
 
     DArray numbers = new_darray(3);
-    insert(&numbers, 10);
-    insert(&numbers, 20);
-    insert(&numbers, 30);
-    insert(&numbers, 40);
+    d_insert(&numbers, 10);
+    d_insert(&numbers, 20);
+    d_insert(&numbers, 30);
+    d_insert(&numbers, 40);
+    d_remove(&numbers, 2);
+    d_insert(&numbers, 50);
+    d_insert(&numbers, 60);
     print_darray(&numbers);
     free_darray(&numbers);
 
