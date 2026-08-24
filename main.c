@@ -129,9 +129,9 @@ int main(int argc, char *argv[]){
     d_insert(&numbers, 20); // 1
     d_insert(&numbers, 30); // 2
     d_insert(&numbers, 40);
+    d_remove(&numbers, 2);  // no 30
     d_insert(&numbers, 50);
     d_insert(&numbers, 60);
-    d_remove(&numbers, 2);  // no 30
     print_darray(&numbers);
     printf("%d\n", d_index_of(&numbers, 20)); // 1
     printf("%d\n", d_index_of(&numbers, 600)); // -1
