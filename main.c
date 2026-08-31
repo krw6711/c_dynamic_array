@@ -35,20 +35,16 @@ DArray new_darray(size_t len){
     return new_array_info(new_int_array(len), (int)len);
 }
 
-int expand(DArray *buf, size_t len)
+int expand(DArray *buf)
 {
-    if(len == 0){
-        printf("can not increase by nothing");
-        return 1;
-    }
-    size_t new_size = ((size_t)buf->length + len) * sizeof(int);
+    size_t new_size = ((size_t)buf->length * 2) * sizeof(int);
     int* new_ptr = realloc(buf->array, new_size);
     if(new_ptr ==  NULL){
         printf("cant expand, oout of memory");
         return 1;
     }
     buf->array = new_ptr;
-    buf->length+= (int)len;
+    buf->length*= 2;
     return 0;
 }
 
@@ -71,7 +67,7 @@ int collapse(DArray *buf, size_t len)
 
 int d_insert(DArray *buf, int item){
     if(buf->length == buf->filled){
-        if(expand(buf, 1)){
+        if(expand(buf)){
             printf("can not insert, no space");
             return 1;
         }
@@ -84,7 +80,7 @@ int d_insert(DArray *buf, int item){
 
 int d_remove(DArray *buf, int index) // 2
 {
-    if(index < 0){
+    if(index < 0 && index < buf->length){
         printf("out of bounds");
         return 1;
     }
@@ -115,6 +111,18 @@ void print_darray(DArray *buf){
     }
 }
 
+int d_get_value(DArray *buf, int index)
+{
+    if(index >= 0 && index < buf->length) return buf->array[index];
+    return -1;
+}
+
+int d_edit_value(DArray *buf, int index, int value){
+    if(index < 0 && index < buf->length) return 1;
+    buf->array[index] = value;
+    return 0;
+}
+
 void free_darray(DArray *buf)
 {
     free(buf->array);
@@ -132,6 +140,8 @@ int main(int argc, char *argv[]){
     d_remove(&numbers, 2);  // no 30
     d_insert(&numbers, 50);
     d_insert(&numbers, 60);
+    d_edit_value(&numbers, 0, 5);
+    printf("%d\n", d_get_value(&numbers, 3));
     print_darray(&numbers);
     printf("%d\n", d_index_of(&numbers, 20)); // 1
     printf("%d\n", d_index_of(&numbers, 600)); // -1
